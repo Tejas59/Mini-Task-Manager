@@ -15,15 +15,17 @@ const LoginModal = () => {
 
     try {
       const { data } = await axios.post(
-        "https://auth-backend-1-sk1n.onrender.com/",
+        "http://localhost:8080/api/auth/login",
         {
           email,
           password,
-        }
+        },
+        { withCredentials: true }
       );
 
-      if (data.status === "success") {
-        localStorage.setItem("name", data.name);
+      if (data.success) {
+        localStorage.setItem("name", data.user.name);
+        localStorage.setItem("id", data.user.id);
         navigate("/home");
       }
     } catch (err: unknown) {
@@ -48,7 +50,7 @@ const LoginModal = () => {
 
   return (
     <div className="flex items-center justify-center bg-blue-100 min-h-screen">
-      <div className="bg-yellow-200 p-6 rounded-xl shadow-md w-80">
+      <div className="bg-white p-6 rounded-xl shadow-md w-80">
         <h2 className="text-2xl font-bold mb-4 text-center">Login</h2>
 
         {loginError && (
