@@ -8,8 +8,6 @@ const authMiddleware: RequestHandler = (
 ): void => {
   const { token } = req.cookies;
 
-  console.log({token})
-
   if (!token) {
     res.status(401).json({
       status: false,

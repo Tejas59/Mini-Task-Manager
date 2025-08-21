@@ -18,22 +18,18 @@ const RegisterModal = () => {
       return;
     }
 
-    try {
-      await axios.post("http://localhost:8080/api/auth/register", {
+    const { data } = await axios.post(
+      "http://localhost:8080/api/auth/register",
+      {
         name,
         email,
         password,
-      });
-      navigate("/");
-    } catch (err: unknown) {
-      if (
-        axios.isAxiosError(err) &&
-        err.response?.data?.error === "Email already registered"
-      ) {
-        setError("Email already registered");
-      } else {
-        console.error("Error registering user:", err);
       }
+    );
+    if (data.success) {
+      navigate("/");
+    } else {
+      setError(data.message);
     }
   };
 

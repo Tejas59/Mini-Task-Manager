@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
-import { UserModal } from "@/models/userModel";
+import { UserModel } from "@/models/userModel";
 import jwt from "jsonwebtoken";
 
 export const userRegistrationController = async (
@@ -12,13 +12,13 @@ export const userRegistrationController = async (
   if (!name || !password || !email) {
     return res.json({ success: false, message: "Invalid data" });
   }
-  const exisitngUser = await UserModal.findOne({ email });
+  const exisitngUser = await UserModel.findOne({ email });
   if (exisitngUser) {
     return { success: false, message: "User alerady exist" };
   }
   const hashPassword = await bcrypt.hash(password, 10);
 
-  const user = new UserModal({ name, email, password: hashPassword });
+  const user = new UserModel({ name, email, password: hashPassword });
   await user.save();
 
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET as string, {
@@ -44,7 +44,7 @@ export const userLoginController = async (req: Request, res: Response) => {
     };
   }
 
-  const user = await UserModal.findOne({ email });
+  const user = await UserModel.findOne({ email });
   if (!user) {
     return {
       success: false,

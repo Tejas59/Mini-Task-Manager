@@ -13,38 +13,21 @@ const LoginModal = () => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    try {
-      const { data } = await axios.post(
-        "http://localhost:8080/api/auth/login",
-        {
-          email,
-          password,
-        },
-        { withCredentials: true }
-      );
+    const { data } = await axios.post(
+      "http://localhost:8080/api/auth/login",
+      {
+        email,
+        password,
+      },
+      { withCredentials: true }
+    );
 
-      if (data.success) {
-        localStorage.setItem("name", data.user.name);
-        localStorage.setItem("id", data.user.id);
-        navigate("/home");
-      }
-    } catch (err: unknown) {
-      if (axios.isAxiosError(err) && err.response) {
-        if (err.response.status === 401) {
-          setLoginError("Incorrect password. Please try again.");
-        } else if (err.response.status === 403) {
-          setLoginError("Your account is locked. Try again later.");
-        } else if (err.response.status === 404) {
-          setLoginError("Email not found. Please check and try again.");
-        } else {
-          setLoginError(
-            "An unexpected error occurred. Please try again later."
-          );
-        }
-      } else {
-        console.error("Error logging in:", err);
-        setLoginError("Something went wrong.");
-      }
+    if (data.success) {
+      localStorage.setItem("name", data.user.name);
+      localStorage.setItem("id", data.user.id);
+      navigate("/home");
+    } else {
+      setLoginError(data.message);
     }
   };
 

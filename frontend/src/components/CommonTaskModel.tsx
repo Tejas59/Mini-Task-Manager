@@ -73,7 +73,7 @@ const CommonTaskModal: React.FC<{
           </label>
           <input
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="entityname"
+            id="titlename"
             type="text"
             placeholder="Enter Entity name"
             value={addTaskObj.title}
@@ -156,7 +156,7 @@ const CommonTaskModal: React.FC<{
           <textarea
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             id="notes"
-            placeholder="Enter notes here (optional)"
+            placeholder="Enter description here"
             rows={4}
             value={addTaskObj.description}
             onChange={(e) => {
