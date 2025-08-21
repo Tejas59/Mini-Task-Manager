@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { Task } from "../interface/task.interface";
 import axios from "axios";
+import Loader from "./Loader";
 
 const CommonTaskModal: React.FC<{
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -16,6 +17,8 @@ const CommonTaskModal: React.FC<{
     }
   );
   const [openTaskTypeOption, setOpenTaskTypeOption] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
 
   const allMandatoryFieldSelect =
     addTaskObj.description.trim() !== "" &&
@@ -23,6 +26,9 @@ const CommonTaskModal: React.FC<{
     addTaskObj.title.trim() !== "";
 
   const handleSaveTaskClick = async () => {
+    setIsLoading(true);
+    setError("");
+
     try {
       if (task) {
         const res = await axios.put(
@@ -37,7 +43,6 @@ const CommonTaskModal: React.FC<{
         );
 
         setOpenModal(false);
-
         console.log("Edited:", res.data);
       } else {
         const res = await axios.post(
@@ -50,11 +55,15 @@ const CommonTaskModal: React.FC<{
           },
           { withCredentials: true }
         );
+
         setOpenModal(false);
         console.log("Added:", res.data);
       }
-    } catch (error) {
-      console.error("Error:", error);
+    } catch (err) {
+      setError("Failed to save task. Please try again.");
+      console.error("Error:", err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -184,9 +193,14 @@ const CommonTaskModal: React.FC<{
           type="button"
           className="h-[40px] items-center justify-centerfont-medium text-sm px-4 py-2 focus:outline-none hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700  text-black "
         >
-          Save
+          {isLoading ? <Loader /> : "Save"}
         </button>
       </div>
+      {error && (
+        <div className="mb-4 p-2 text-sm text-red-700 bg-red-100 rounded">
+          {error}
+        </div>
+      )}
     </div>
   );
 };

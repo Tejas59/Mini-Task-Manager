@@ -1,33 +1,41 @@
 import axios from "axios";
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import Loader from "./Loader";
 
 const LoginModal = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
   const [loginError, setLoginError] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const navigate = useNavigate();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsLoading(true);
+    setLoginError("");
 
-    const { data } = await axios.post(
-      `${import.meta.env.VITE_API_URL}/auth/login`,
-      {
-        email,
-        password,
-      },
-      { withCredentials: true }
-    );
+    try {
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_API_URL}/auth/login`,
+        { email, password },
+        { withCredentials: true }
+      );
 
-    if (data.success) {
-      localStorage.setItem("name", data.user.name);
-      localStorage.setItem("id", data.user.id);
-      navigate("/home");
-    } else {
-      setLoginError(data.message);
+      if (data.success) {
+        localStorage.setItem("name", data.user.name);
+        localStorage.setItem("id", data.user.id);
+        navigate("/home");
+      } else {
+        setLoginError(data.message);
+      }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (err) {
+      setLoginError("Something went wrong. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -84,7 +92,7 @@ const LoginModal = () => {
             type="submit"
             className="w-full bg-green-500 hover:bg-green-600 text-white py-2 rounded-md font-medium transition-colors"
           >
-            Login
+            {isLoading ? <Loader /> : "Login"}
           </button>
 
           <p className="text-center text-sm mt-2">Don't have an account?</p>

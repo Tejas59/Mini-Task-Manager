@@ -1,35 +1,44 @@
 import axios from "axios";
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import Loader from "./Loader";
 
 const RegisterModal = () => {
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const navigate = useNavigate();
+  const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setError("");
+    setIsLoading(true);
 
     if (password.length < 5) {
       setError("Password must be at least 5 characters long.");
+      setIsLoading(false); // reset loading since we're returning early
       return;
     }
 
-    const { data } = await axios.post(
-      `${import.meta.env.VITE_API_URL}/auth/register`,
-      {
-        name,
-        email,
-        password,
+    try {
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_API_URL}/auth/register`,
+        { name, email, password }
+      );
+
+      if (data.success) {
+        navigate("/");
+      } else {
+        setError(data.message);
       }
-    );
-    if (data.success) {
-      navigate("/");
-    } else {
-      setError(data.message);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (err) {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -100,7 +109,7 @@ const RegisterModal = () => {
             type="submit"
             className="w-full bg-green-500 hover:bg-green-600 text-white py-2 rounded-md font-medium transition-colors"
           >
-            Register
+            {isLoading ? <Loader /> : "Register"}
           </button>
 
           <p className="text-center text-sm mt-2">Already have an account?</p>
