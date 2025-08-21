@@ -16,7 +16,7 @@ const TaskTable = () => {
 
   const fetchData = useCallback(async () => {
     const response = await axios.get(
-      `http://localhost:8080/api/task/${userId}`,
+      `${import.meta.env.VITE_API_URL}/task/${userId}`,
       { withCredentials: true }
     );
     const tasks: Task[] = response.data;
@@ -29,9 +29,12 @@ const TaskTable = () => {
   }, [fetchData, openAddModal, openEditModal]);
   console.log({ data });
   const deleteTask = async (taskId: string) => {
-    await axios.delete(`http://localhost:8080/api/task/delete/${taskId}`, {
-      withCredentials: true,
-    });
+    await axios.delete(
+      `${import.meta.env.VITE_API_URL}/task/delete/${taskId}`,
+      {
+        withCredentials: true,
+      }
+    );
     await fetchData();
   };
 
@@ -46,7 +49,7 @@ const TaskTable = () => {
         </button>
         <button
           onClick={async () => {
-            await axios.get("http://localhost:8080/api/auth/logout");
+            await axios.get(`${import.meta.env.VITE_API_URL}/auth/logout`);
             localStorage.clear();
             navigate("/");
           }}

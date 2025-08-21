@@ -26,7 +26,7 @@ const CommonTaskModal: React.FC<{
     try {
       if (task) {
         const res = await axios.put(
-          `http://localhost:8080/api/task/update/${task._id}`,
+          `${import.meta.env.VITE_API_URL}/task/update/${task._id}`,
           {
             title: addTaskObj.title,
             status: addTaskObj.status,
@@ -41,7 +41,7 @@ const CommonTaskModal: React.FC<{
         console.log("Edited:", res.data);
       } else {
         const res = await axios.post(
-          `http://localhost:8080/api/task/add`,
+          `${import.meta.env.VITE_API_URL}/task/add`,
           {
             title: addTaskObj.title,
             status: addTaskObj.status,

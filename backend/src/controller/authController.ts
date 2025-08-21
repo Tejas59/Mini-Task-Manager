@@ -10,10 +10,10 @@ export const userRegistrationController = async (
   const { name, password, email } = req.body;
 
   if (!name || !password || !email) {
-    return res.json({ success: false, message: "Invalid data" });
+    return ({ success: false, message: "Invalid data" });
   }
-  const exisitngUser = await UserModel.findOne({ email });
-  if (exisitngUser) {
+  const existingUser  = await UserModel.findOne({ email });
+  if (existingUser ) {
     return { success: false, message: "User alerady exist" };
   }
   const hashPassword = await bcrypt.hash(password, 10);
@@ -29,9 +29,9 @@ export const userRegistrationController = async (
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
-    maxAge: 7 * 24 * 60 * 60 * 100,
+    maxAge: 7 * 24 * 60 * 60 * 1000,
   });
-  return { sucess: true };
+  return { success: true };
 };
 
 export const userLoginController = async (req: Request, res: Response) => {
@@ -75,12 +75,12 @@ export const userLoginController = async (req: Request, res: Response) => {
   };
 };
 
-export const userLogoutController = async (res: Response) => {
+export const userLogoutController = async (req: Request, res: Response) => {
   res.clearCookie("token", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
   });
 
-  return { sucess: true, message: "Logged out" };
+  return { success: true, message: "Logged out" };
 };

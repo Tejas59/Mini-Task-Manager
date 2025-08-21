@@ -20,12 +20,10 @@ auth.post("/login", async (req: Request, res: Response) => {
   res.status(200).json(result);
 });
 
-
 //logout api for user
 auth.get("/logout", async (req: Request, res: Response) => {
-  const result = await userLogoutController(res);
+  const result = await userLogoutController(req, res);
   res.status(200).json(result);
 });
-
 
 export default auth;
