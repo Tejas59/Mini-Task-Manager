@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 const TaskTable = () => {
   const userId = localStorage.getItem("id");
   const navigate = useNavigate();
-  
+
   const [data, setData] = useState<Task[] | null>(null);
   const [openAddModal, setOpenAddModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
@@ -29,7 +29,9 @@ const TaskTable = () => {
   }, [fetchData, openAddModal, openEditModal]);
   console.log({ data });
   const deleteTask = async (taskId: string) => {
-    await axios.delete(`/delete/${taskId}`);
+    await axios.delete(`http://localhost:8080/api/task/delete/${taskId}`, {
+      withCredentials: true,
+    });
     await fetchData();
   };
 
@@ -46,7 +48,7 @@ const TaskTable = () => {
           onClick={async () => {
             await axios.get("http://localhost:8080/api/auth/logout");
             localStorage.clear();
-             navigate("/");
+            navigate("/");
           }}
           className="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-4 py-2"
         >
